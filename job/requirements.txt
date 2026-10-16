@@ -1,0 +1,8 @@
+# Pacotes do job diario (job/pontuar_presencial.py) -- Python 3.12
+# Versoes EXATAS: o .pkl foi gravado com scikit-learn 1.9.0 e so abre com
+# garantia na mesma versao. Retreinou com outra? Atualize aqui junto.
+scikit-learn==1.9.0
+numpy==2.5.3
+pandas==3.0.5
+joblib==1.6.0
+pyodbc==5.3.0

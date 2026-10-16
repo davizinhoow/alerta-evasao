@@ -1,0 +1,28 @@
+Options -Indexes
+RewriteEngine On
+
+# Repassa o token ao PHP (alguns Apache/CGI descartam o Authorization)
+RewriteCond %{HTTP:Authorization} .
+RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+
+# URL sem extensao, como no agendamento-new/api: alunos/listar -> alunos/listar.php.
+# Confere o arquivo pelo caminho INTEIRO da URL: o %{REQUEST_FILENAME}.php do
+# original corta o que vem depois (alunos/consultar/123 vira alunos/consultar) e
+# entra em loop -> erro 500.
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{DOCUMENT_ROOT}%{REQUEST_URI}.php -f
+RewriteRule ^ %{REQUEST_URI}.php [END]
+
+# Qualquer outra rota que nao existe: 404 em JSON com as rotas validas, em vez da
+# pagina HTML do Apache (ex.: alunos/9000001, formato antigo da versao Python).
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^ nao_encontrado.php [END]
+
+# Apache 2.4.13+: forma oficial de repassar o Authorization
+<IfModule mod_version.c>
+    <IfVersion >= 2.4.13>
+        CGIPassAuth On
+    </IfVersion>
+</IfModule>

@@ -1,0 +1,2 @@
+# Bibliotecas: incluidas pelos endpoints, nunca chamadas direto.
+Require all denied

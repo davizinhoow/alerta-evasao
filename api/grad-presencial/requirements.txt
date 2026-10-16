@@ -1,0 +1,8 @@
+# API de consulta (api/grad-presencial/app.py) -- Python 3.12
+# So le o banco: nao precisa de scikit-learn nem do .pkl.
+fastapi==0.141.1
+uvicorn==0.53.0
+pydantic==2.13.5
+pyodbc==5.3.0
+# so para o teste_api.py
+httpx==0.28.1

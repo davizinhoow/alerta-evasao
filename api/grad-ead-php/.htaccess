@@ -1,0 +1,6 @@
+# Raiz da pasta: nada aqui e rota. O teste, os .md e o .gitignore nao ficam expostos.
+Options -Indexes
+
+<FilesMatch "(^teste_api\.php|\.md|^\.gitignore)$">
+    Require all denied
+</FilesMatch>

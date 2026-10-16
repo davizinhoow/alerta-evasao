@@ -1,0 +1,23 @@
+# Dados de aluno NUNCA entram neste repositorio.
+# Sao dados pessoais de menores e de adultos identificaveis por matricula.
+dados/
+tabelas/
+*.csv
+*.xlsx
+*.parquet
+
+# Modelos treinados sobre dados reais
+*.pkl
+
+# Queries de extracao (expoem o esquema do ERP)
+querys/
+
+# Credenciais
+.env
+*.key
+
+# Python
+.venv/
+__pycache__/
+*.pyc
+.ipynb_checkpoints/

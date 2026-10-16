@@ -1,0 +1,36 @@
+Options -Indexes
+RewriteEngine On
+
+# Repassa o token ao PHP (alguns Apache/CGI descartam o Authorization)
+RewriteCond %{HTTP:Authorization} .
+RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+
+# MODALIDADE no 1o segmento da URL: presencial/..., ead/... ou hibrido/...
+#   presencial/alunos/listar -> alunos/listar.php?modalidade=presencial
+# O ?modalidade= entra ANTES da query do usuario (QSA a acrescenta depois), entao
+# o PHP le a 1a ocorrencia e a rota manda na tabela. Lista fechada de endpoints:
+# nao deixa a modalidade virar um caminho arbitrario. docs e openapi ficam de
+# fora (sao agnosticos de modalidade -- caem na regra generica abaixo).
+RewriteRule ^(presencial|ead|hibrido)/(alunos/(?:listar|consultar)|fila/(?:resumo|datas|saude))/?$ $2.php?modalidade=$1 [QSA,END]
+
+# URL sem extensao, como no agendamento-new/api: alunos/listar -> alunos/listar.php.
+# Confere o arquivo pelo caminho INTEIRO da URL: o %{REQUEST_FILENAME}.php do
+# original corta o que vem depois (alunos/consultar/123 vira alunos/consultar) e
+# entra em loop -> erro 500.
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{DOCUMENT_ROOT}%{REQUEST_URI}.php -f
+RewriteRule ^ %{REQUEST_URI}.php [END]
+
+# Qualquer outra rota que nao existe: 404 em JSON com as rotas validas, em vez da
+# pagina HTML do Apache (ex.: alunos/9000001, formato antigo da versao Python).
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^ nao_encontrado.php [END]
+
+# Apache 2.4.13+: forma oficial de repassar o Authorization
+<IfModule mod_version.c>
+    <IfVersion >= 2.4.13>
+        CGIPassAuth On
+    </IfVersion>
+</IfModule>
